@@ -43,12 +43,12 @@ def vote(utility, times, participants):
     for i in range(participants):
         for j in range(times):
             totals_votes_cur = [sum(x) for x in zip(*votes)]
-            if totals_votes_cur[j]/participants >= .8:
+            if totals_votes_cur[j]/participants >= .75:
                 popular = True
             if totals_votes_cur[j]/participants <= .2:
                 unpopular = True
 
-            if utility[i][j] > t_2:
+            if utility[i][j] > .5:
                 votes[i][j] = 1
             elif t_1 < utility[i][j] < t_2:
                 if popular:
@@ -64,7 +64,7 @@ def vote(utility, times, participants):
     
     return votes
 
-#removing individual thresholds
+#removed individual thresholds
 
 def main():
     numTimeSlots = 12
