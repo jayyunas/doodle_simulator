@@ -1,4 +1,4 @@
-CONTENTS OF THIS FILE
+CONTENTS
 ---------------------
 
  * Introduction
@@ -40,21 +40,24 @@ CONFIGURATION
 
 All versions of the simulator have multiple aspects that can be toggled (e.g. # of voters, # of time slots, etc.).
 
-* v1.0:
+Hidden Polls:
+* hidden_simulation_v1.0:
     Allows one basic instance of a doodle poll with singular default voting threshold
 
-* v2.0:
+* hidden_simulation_v1.1:
     Each user has arbitrarily generated threshold
 
-* v2.1:
+* hidden_simulation_v1.2:
     Capability to choose number of Doodle instances, compare OPT(I) to DDL(I)
 
+Open Polls:
+* open_simulation_v1.0:
+    Based on Zou, James et al Social Voting Model
 
 FAQ
 ---
 
 Q: What new features are expected to be added?
-
 A: We hope to add increased data analysis from this tool -- including excel spreadsheets.
    Currently in the process of creating a system to visualize the extrapolated data sets.
 
