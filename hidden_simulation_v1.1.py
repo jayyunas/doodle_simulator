@@ -66,7 +66,7 @@ def vote(utility, threshold, times, participants):
 def individual_thresholds(participants):
     thresholds = []
     for i in range(participants):
-        t = (randrange(2, 8, 1))/10
+        t = .5#(randrange(2, 8, 1))/10
         thresholds.append(t)
     
     print("Individual Thresholds:", thresholds, '\n')
