@@ -6,6 +6,8 @@ from random import *
 import math
 from array import *
 
+#single simulation with single global threshold
+
 def doodle(times, participants, utilities, votes):
     u = utilities
     v = votes
@@ -67,7 +69,7 @@ def main():
 
     #randomly generated threshold between 0.2 and 0.8
     t = (randrange(2, 8, 1))/10
-    print(t)
+    print("Global Threshold:", t)
 
     #randomly generated utilites (even distribution)
     u = util(numTimeSlots, numParticipants)

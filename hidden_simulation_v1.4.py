@@ -61,10 +61,10 @@ def individual_thresholds(participants):
     return thresholds
 
 def main():
-    numTimeSlots = 5
-    numParticipants = 15
+    numTimeSlots = 30
+    numParticipants = 5
 
-    global_threshold = 0.2
+    global_threshold = 2
     avg_welfare = []
     max_welfare = []
 
@@ -76,13 +76,13 @@ def main():
         
         for i in range(1000):
             u = util(numTimeSlots, numParticipants)
-            v = vote(u, global_threshold, numTimeSlots, numParticipants)
+            v = vote(u, global_threshold/10, numTimeSlots, numParticipants)
             d = doodle(v, u, numTimeSlots, numParticipants)
 
             welfare_ratios.append(d)
             total += d
 
-        global_threshold += 0.1
+        global_threshold += 1
         
         avg_welfare_ratio = round(total/1000,2)
         avg_welfare.append(avg_welfare_ratio)

@@ -6,6 +6,8 @@ from random import *
 import math
 from array import *
 
+#first trial to see how many times doodle matches OPT
+
 def doodle():
     numTimeSlots = 5
     numParticipants = 15

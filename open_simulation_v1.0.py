@@ -99,10 +99,10 @@ def main():
 
     match = []
     no_match = []
-    for j in range(1):
+    for j in range(7):
         false = 0
         true = 0
-        for i in range(2):
+        for i in range(1000):
             print("Trial No.", i+1)
             u = util(numTimeSlots, numParticipants)
             v = vote(u, numTimeSlots, numParticipants)

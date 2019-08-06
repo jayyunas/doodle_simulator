@@ -58,8 +58,8 @@ def individual_thresholds(participants):
     return thresholds
 
 def main():
-    numTimeSlots = 5
-    numParticipants = 15
+    numTimeSlots = 12
+    numParticipants = 5
 
     global_threshold = 0.2
 
@@ -69,13 +69,13 @@ def main():
     percent_match = []
     percent_no_match = []
     
-    for j in range(7):
+    for j in range(8):
         true = 0
         false = 0
 
         print(global_threshold)
         
-        for i in range(1000):
+        for i in range(10000):
             u = util(numTimeSlots, numParticipants)
             v = vote(u, global_threshold, numTimeSlots, numParticipants)
             d = doodle(v, u, numTimeSlots, numParticipants)
@@ -89,8 +89,8 @@ def main():
         global_threshold += 0.1
         match.append(true)
         no_match.append(false)
-        percent_match.append(round((true/1000)*100, 2))
-        percent_no_match.append(round((false/1000)*100, 2))
+        percent_match.append(round((true/10000)*100, 2))
+        percent_no_match.append(round((false/10000)*100, 2))
         
 
     print('\n'+ "Number of matches:", match,'\n'+"Number of non-matches:", no_match)

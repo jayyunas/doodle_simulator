@@ -6,9 +6,11 @@ from random import *
 import math
 from array import *
 
+#single simulation with individual thresholds
+
 def doodle():
-    numTimeSlots = 5
-    numParticipants = 15
+    numTimeSlots = 12
+    numParticipants = 5
     t = individual_thresholds(numParticipants)
     u = util(numTimeSlots, numParticipants)
     v = vote(u, t, numTimeSlots, numParticipants)
@@ -66,7 +68,7 @@ def vote(utility, threshold, times, participants):
 def individual_thresholds(participants):
     thresholds = []
     for i in range(participants):
-        t = .5#(randrange(2, 8, 1))/10
+        t = (randrange(2, 8, 1))/10
         thresholds.append(t)
     
     print("Individual Thresholds:", thresholds, '\n')
