@@ -6,7 +6,6 @@
 from random import *
 import math
 from array import *
-import xlsxwriter
 
 def doodle(vote, utilities, times, participants):
     v = vote
@@ -38,45 +37,58 @@ def vote(utility, times, participants):
     votes = [[0 for x in range(times)] for y in range(participants)]
     t_2 = .75
     t_1 = .25
-    popular = False
-    unpopular = False
-    
-    for i in range(participants):
+    t_global = .5
+   
+
+    #have voter 0 vote based on default threshold
+    for j in range(times):
+        if utility[0][j] > t_global:
+            votes[0][j] = 1
+        else:
+            votes[0][j] = 0
+            
+    #have i start at 1
+    for i in range(1, participants):
+        
         for j in range(times):
+            popular = False
+            unpopular = False
             totals_votes_cur = [sum(x) for x in zip(*votes)]
-            if totals_votes_cur[j]/participants >= .75:
+            if totals_votes_cur[j]/i >= .8:
                 popular = True
-            if totals_votes_cur[j]/participants <= .2:
+            if totals_votes_cur[j]/i <= .2:
                 unpopular = True
 
-            if utility[i][j] > .5:
+            if utility[i][j] > t_2:
                 votes[i][j] = 1
-            elif t_1 < utility[i][j] < t_2:
-                if popular:
-                    #print("Time Slot", j+1, "is popular for voter", i+1)
-                    votes[i][j] = 1
-                elif unpopular:
-                    #print("Time Slot", j+1, "is unpopular for voter", i+1)
+            elif t_1 < utility[i][j] <= t_2:
+                if popular or unpopular:
                     votes[i][j] = 1
                 else:
                     votes[i][j] = 0
             else: 
                 votes[i][j] = 0
-    
-    return votes
 
-#removed individual thresholds
+    return votes
 
 def main():
     numTimeSlots = 12
     numParticipants = 5
+    
+    numTrials = int(input("numTrials? "))
 
+    print('\n'+"Voting Threshold Ranges:")
+    print("[0, 0.25] -- 0")
+    print("(0.25, 0.75] -- depends on popularity")
+    print("[0.75, 1] -- 1")
+
+    print("")
     match = []
     no_match = []
     for j in range(10):
         false = 0
         true = 0
-        for i in range(1000):
+        for i in range(numTrials):
             u = util(numTimeSlots, numParticipants)
             v = vote(u, numTimeSlots, numParticipants)
             d = doodle(v, u, numTimeSlots, numParticipants)
@@ -85,24 +97,23 @@ def main():
                 true += 1
             else:
                 false += 1
-        print(true/false)
         match.append(true)
         no_match.append(false)
 
-    data = xlsxwriter.Workbook('open_simulation_trial1.xlsx')
-    datasheet = data.add_worksheet() 
+    total_match = sum(match)
+    avg_match = round(((total_match/numTrials)/numTrials)*numTrials, 2)
 
-    row = 0
-    column = 0
+    total_no_match = sum(no_match)
+    avg_no_match = round(((total_no_match/numTrials)/numTrials)*numTrials, 2)
+    
+    print("Average Percent of Matches:", str(avg_match) + '%')
 
-    for items in match:
-        datasheet.write(row, column, items)
-        row += 1
+    print("")
+    
+    print("Average Percent of Non-Matches:", str(avg_no_match) + '%')
 
-    for items in no_match:
-        datasheet.write(row, column+1, items)
-        row +=1
 
-    data.close()
+    
+
     
 main()

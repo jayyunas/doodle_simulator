@@ -2,7 +2,7 @@
 ##Jay Yunas
 ##CS Summer Research Project
 
-##v1.4: percent of the time doodle matches OPT
+##v1.5: average and max welfare approximation ratio
 ## individual thresholds
 
 from random import *
@@ -21,9 +21,12 @@ def doodle(vote, utilities, times, participants):
     max_value_utilities = max(col_totals_utilities)
     max_index_utilities = col_totals_utilities.index(max_value_utilities)
 
-    if max_index_votes == max_index_utilities:
-        return True
-    return False
+    opt = max_value_utilities
+    ddl = col_totals_utilities[max_index_votes]
+
+    welfare_approx_ratio = opt/ddl
+    
+    return welfare_approx_ratio
     
 
 def util(times, participants):
@@ -54,23 +57,22 @@ def individual_thresholds(participants):
     for i in range(participants):
         t = (randrange(2, 8, 1))/10
         thresholds.append(t)
-    
+
     return thresholds
 
 def main():
-    numTimeSlots = 12
+    numTimeSlots = 30
     numParticipants = 5
 
-    match = []
-    no_match = []
+    avg_welfare = []
+    max_welfare = []
 
-    percent_match = []
-    percent_no_match = []
+    numTrials = int(input("numTrials? "))
+    print("Number of Trials:", numTrials)
 
-    numTrials = int(input("How many trials? "))
-    
-    true = 0
-    false = 0
+    total = 0
+    avg_welfare_ratio = 0
+    welfare_ratios = []
     
     for i in range(numTrials):
         t = individual_thresholds(numParticipants)
@@ -78,17 +80,16 @@ def main():
         v = vote(u, t, numTimeSlots, numParticipants)
         d = doodle(v, u, numTimeSlots, numParticipants)
 
-        if d:
-            true += 1
-        else:
-            false += 1
-
-    match.append(true)
-    no_match.append(false)
-    percent_match.append(round((true/numTrials)*100, 2))
-    percent_no_match.append(round((false/numTrials)*100, 2))
-        
-    print('\n'+ "Number of matches:", match,'\n'+"Number of non-matches:", no_match)
-    print('\n'+ "% of matches:", percent_match,'\n'+"% of non-matches:", percent_no_match)
+        welfare_ratios.append(d)
+        total += d
     
+    avg_welfare_ratio = round(total/numTrials,2)
+    avg_welfare.append(avg_welfare_ratio)
+
+    max_welfare_ratio = round(max(welfare_ratios),2)
+    max_welfare.append(max_welfare_ratio)    
+
+    print('\n'+ "Average ratio of OPT/doodle:", avg_welfare)
+    print("Max welfare ratio of OPT/doodle:", max_welfare)
+
 main()
