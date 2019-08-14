@@ -3,8 +3,8 @@
 ##Jay Yunas
 ##CS Summer Research Project
 
-##Open Simulation v1.2
-## average and max welfare approximation ratio
+##Open Simulation v1.0
+## single instance
 
 from random import *
 import math
@@ -16,18 +16,21 @@ def doodle(vote, utilities, times, participants):
     col_totals_votes = [sum(x) for x in zip(*v)]
     col_totals_utilities = [sum(x) for x in zip(*u)]
 
+    print("Total Votes:", col_totals_votes)
+    print("Social Welfare:", [round(elem, 2) for elem in col_totals_utilities], '\n')
+
     max_value_votes = max(col_totals_votes)
     max_index_votes = col_totals_votes.index(max_value_votes)
 
     max_value_utilities = max(col_totals_utilities)
     max_index_utilities = col_totals_utilities.index(max_value_utilities)
 
-    opt = max_value_utilities
-    ddl = col_totals_utilities[max_index_votes]
+    print("The doodle slot in this poll is slot:", max_index_votes + 1, "with social welfare:", round(col_totals_utilities[max_index_votes], 2))
+    print("The socially optimal times slot is:", max_index_utilities + 1, "with social welfare:", round(col_totals_utilities[max_index_utilities], 2)) 
 
-    welfare_approx_ratio = opt/ddl
-    
-    return welfare_approx_ratio
+    if max_index_votes == max_index_utilities:
+        return True
+    return False
         
 def util(times, participants):
     utilities = [[0 for x in range(times)] for y in range(participants)]
@@ -36,6 +39,14 @@ def util(times, participants):
         for j in range(times):
             u = round(random(), 2)
             utilities[i][j] = u
+
+    print("Utilities:")
+    voter = 0
+    for row in utilities:
+        voter += 1
+        print("Voter", str(voter) + ":", row)
+
+    print("")
             
     return utilities
 
@@ -43,12 +54,12 @@ def vote(utility, times, participants):
     votes = [[0 for x in range(times)] for y in range(participants)]
     t_2 = .75
     t_1 = .25
-    t_global = .5
+    t_first = .5
    
 
     #have voter 0 vote based on default threshold
     for j in range(times):
-        if utility[0][j] > t_global:
+        if utility[0][j] > t_first:
             votes[0][j] = 1
         else:
             votes[0][j] = 0
@@ -67,42 +78,36 @@ def vote(utility, times, participants):
 
             if utility[i][j] > t_2:
                 votes[i][j] = 1
-            elif t_1 < utility[i][j] <= t_2:
-                if popular or unpopular:
+            elif t_1 < utility[i][j] < t_2:
+                if popular:
+                    print("Time Slot", j+1, "is popular for voter", i+1)
+                    votes[i][j] = 1
+                elif unpopular:
+                    print("Time Slot", j+1, "is unpopular for voter", i+1)
                     votes[i][j] = 1
                 else:
                     votes[i][j] = 0
             else: 
                 votes[i][j] = 0
 
+    print("")
+    print("Votes:")
+    voter = 0
+    for row in votes:
+        voter += 1
+        print("Voter", str(voter) + ":", row)
+
+    print("")
     return votes
 
+#removed individual thresholds
+
 def main():
-    while True:
-        print("Open Simulation, Average & Max Welfare Approximation Ratio")
+    numTimeSlots = 12
+    numParticipants = 5
 
-        numTimeSlots = 12
-        numParticipants = 5
-
-        numTrials = int(input("numTrials? "))
-        print("Number of Trials:", numTrials)
-
-        sum_welfare_ratio = 0
-        welfare_ratios = []
-        
-        for i in range(numTrials):
-            u = util(numTimeSlots, numParticipants)
-            v = vote(u, numTimeSlots, numParticipants)
-            d = doodle(v, u, numTimeSlots, numParticipants)
-
-            sum_welfare_ratio += d
-            welfare_ratios.append(d)
-        
-        avg_welfare_ratio = round(sum_welfare_ratio/numTrials, 2)
-        max_welfare_ratio = round(max(welfare_ratios), 2)
-
-        print('\n'+ "Average ratio of OPT/doodle:", avg_welfare_ratio)
-        print("Max welfare ratio of OPT/doodle:", max_welfare_ratio, "\n")
-
+    u = util(numTimeSlots, numParticipants)
+    v = vote(u, numTimeSlots, numParticipants)
+    d = doodle(v, u, numTimeSlots, numParticipants)
     
 main()

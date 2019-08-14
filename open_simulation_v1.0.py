@@ -3,6 +3,9 @@
 ##Jay Yunas
 ##CS Summer Research Project
 
+##Open Simulation v1.1
+## number and percent of matches
+
 from random import *
 import math
 from array import *
@@ -30,14 +33,6 @@ def util(times, participants):
         for j in range(times):
             u = round(random(), 2)
             utilities[i][j] = u
-
-    print("Utilities:")
-    voter = 0
-    for row in utilities:
-        voter += 1
-        print("Voter", str(voter) + ":", row)
-
-    print("")
             
     return utilities
 
@@ -71,50 +66,47 @@ def vote(utility, times, participants):
                 votes[i][j] = 1
             elif t_1 < utility[i][j] < t_2:
                 if popular:
-                    print("Time Slot", j+1, "is popular for voter", i+1)
                     votes[i][j] = 1
                 elif unpopular:
-                    print("Time Slot", j+1, "is unpopular for voter", i+1)
                     votes[i][j] = 1
                 else:
                     votes[i][j] = 0
             else: 
                 votes[i][j] = 0
 
-    print("")
-    print("Votes:")
-    voter = 0
-    for row in votes:
-        voter += 1
-        print("Voter", str(voter) + ":", row)
-
-    print("")
     return votes
 
-#removed individual thresholds
-
 def main():
-    numTimeSlots = 12
-    numParticipants = 10
+    while True:
+        print("Open Simulation, Number & Percent Matches")
+        
+        numTimeSlots = 12
+        numParticipants = 5
 
-    match = []
-    no_match = []
-    for j in range(7):
-        false = 0
-        true = 0
-        for i in range(1000):
-            print("Trial No.", i+1)
+        numTrials = int(input("numTrials? "))
+        print("Number of Trials:", numTrials)
+        
+        match = 0
+        no_match = 0
+
+        for i in range(numTrials):
             u = util(numTimeSlots, numParticipants)
             v = vote(u, numTimeSlots, numParticipants)
             d = doodle(v, u, numTimeSlots, numParticipants)
 
             if d:
-                true += 1
+                match += 1
             else:
-                false += 1
-        match.append(true)
-        no_match.append(false)
-        print(match, no_match)
+                no_match += 1
+
+        print("\n"+"Number of matches:", match)
+        print("Number of non-matches:", no_match)
+
+        avg_match = round((match/numTrials)*100, 2)
+        print("\n"+"% of matches:", avg_match)
+
+        avg_no_match = round((no_match/numTrials)*100, 2)
+        print("% of non-matches:", avg_no_match),"\n")
 
     
 main()

@@ -58,19 +58,16 @@ def individual_thresholds(participants):
     return thresholds
 
 def main():
+    print("Hidden Simulation, Number & Percent Matches")
+    
     numTimeSlots = 12
     numParticipants = 5
 
-    match = []
-    no_match = []
-
-    percent_match = []
-    percent_no_match = []
-
     numTrials = int(input("How many trials? "))
-    
-    true = 0
-    false = 0
+    print("Number of Trials:", numTrials)
+
+    match = 0
+    no_match = 0
     
     for i in range(numTrials):
         t = individual_thresholds(numParticipants)
@@ -79,16 +76,17 @@ def main():
         d = doodle(v, u, numTimeSlots, numParticipants)
 
         if d:
-            true += 1
+            match += 1
         else:
-            false += 1
+            no_match += 1
 
-    match.append(true)
-    no_match.append(false)
-    percent_match.append(round((true/numTrials)*100, 2))
-    percent_no_match.append(round((false/numTrials)*100, 2))
-        
-    print('\n'+ "Number of matches:", match,'\n'+"Number of non-matches:", no_match)
-    print('\n'+ "% of matches:", percent_match,'\n'+"% of non-matches:", percent_no_match)
+    print("\n"+"Number of Matches:", match)
+    print("Number of Non-Matches:", no_match)
+
+    avg_match = round((match/numTrials)*100, 2)
+    print("\n"+"Average Percent of Matches:", str(avg_match) + '%')
+
+    avg_no_match = round((no_match/numTrials)*100, 2)
+    print("Average Percent of Non-Matches:", str(avg_no_match) + '%')
     
 main()

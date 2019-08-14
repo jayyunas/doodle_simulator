@@ -2,8 +2,8 @@
 ##Jay Yunas
 ##CS Summer Research Project
 
-##v1.4: average and max welfare approximation ratio
-## global thresholds
+##v1.5: average and max welfare approximation ratio
+## individual thresholds
 
 from random import *
 import math
@@ -42,9 +42,8 @@ def util(times, participants):
 def vote(utility, threshold, times, participants):
     votes = [[0 for x in range(times)] for y in range(participants)]
 
-    t = threshold
-
     for i in range(participants):
+        t = threshold[i]
         for j in range(times):
             if utility[i][j] > t:
                 votes[i][j] = 1
@@ -62,61 +61,29 @@ def individual_thresholds(participants):
     return thresholds
 
 def main():
-    numTimeSlots = 30
+    print("Hidden Simulation, Average & Max Welfare Approximation Ratio - Individual Thresholds")
+    numTimeSlots = 12
     numParticipants = 5
 
-    global_threshold = 0.2
-    avg_welfare = []
-    max_welfare = []
     numTrials = int(input("numTrials? "))
     print("Number of Trials:", numTrials)
 
-    for j in range(7):
-        total = 0
-        avg_welfare_ratio = 0
-        welfare_ratios = []
-        
-        for i in range(numTrials):
-            u = util(numTimeSlots, numParticipants)
-            v = vote(u, global_threshold, numTimeSlots, numParticipants)
-            d = doodle(v, u, numTimeSlots, numParticipants)
-
-            welfare_ratios.append(d)
-            total += d
-
-        global_threshold += 0.1
-        
-        avg_welfare_ratio = round(total/numTrials,2)
-        avg_welfare.append(avg_welfare_ratio)
-
-        max_welfare_ratio = round(max(welfare_ratios),2)
-        max_welfare.append(max_welfare_ratio)    
-
-    print('\n'+ "Average ratio of OPT/doodle:", avg_welfare)
-    print("Max welfare ratio of OPT/doodle:", max_welfare)
-
-    for i in range(7):
-        print(avg_welfare[i])
-
-    print("")
+    sum_welfare_ratio = 0
+    welfare_ratios = []
     
-    for i in range(7):
-        print(max_welfare[i])
+    for i in range(numTrials):
+        t = individual_thresholds(numParticipants)
+        u = util(numTimeSlots, numParticipants)
+        v = vote(u, t, numTimeSlots, numParticipants)
+        d = doodle(v, u, numTimeSlots, numParticipants)
+
+        sum_welfare_ratio += d
+        welfare_ratios.append(d)
     
+    avg_welfare_ratio = round(sum_welfare_ratio/numTrials, 2)
+    max_welfare_ratio = round(max(welfare_ratios), 2)
+
+    print('\n'+ "Average ratio of OPT/doodle:", avg_welfare_ratio)
+    print("Max welfare ratio of OPT/doodle:", max_welfare_ratio)
+
 main()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

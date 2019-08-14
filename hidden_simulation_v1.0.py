@@ -2,21 +2,18 @@
 ##Jay Yunas
 ##CS Summer Research Project
 
+##v1.3: percent of the time doodle matches OPT
+## global thresholds
+
 from random import *
 import math
 from array import *
 
-#single simulation with single global threshold
-
-def doodle(times, participants, utilities, votes):
+def doodle(vote, utilities, times, participants):
+    v = vote
     u = utilities
-    v = votes
-    
     col_totals_votes = [sum(x) for x in zip(*v)]
     col_totals_utilities = [sum(x) for x in zip(*u)]
-
-    print("Total Votes:", col_totals_votes)
-    print("Social Welfare:", [round(elem, 2) for elem in col_totals_utilities], '\n')
 
     max_value_votes = max(col_totals_votes)
     max_index_votes = col_totals_votes.index(max_value_votes)
@@ -24,60 +21,99 @@ def doodle(times, participants, utilities, votes):
     max_value_utilities = max(col_totals_utilities)
     max_index_utilities = col_totals_utilities.index(max_value_utilities)
 
+    if max_index_votes == max_index_utilities:
+        return True
+    return False
     
-    print("The doodle slot in this poll is slot:", max_index_votes + 1, "with social welfare:", round(col_totals_utilities[max_index_votes], 2))
-    print("The socially optimal times slot is:", max_index_utilities + 1, "with social welfare:", round(col_totals_utilities[max_index_utilities], 2))
-        
+
 def util(times, participants):
     utilities = [[0 for x in range(times)] for y in range(participants)]
+
     for i in range(participants):
         for j in range(times):
             u = round(random(), 2)
             utilities[i][j] = u
 
-    voter = 0
-    for row in utilities:
-        voter += 1
-        print("Voter", str(voter) + ":", row)
-
-    print("")
     return utilities
 
 def vote(utility, threshold, times, participants):
     votes = [[0 for x in range(times)] for y in range(participants)]
 
+    t = threshold
+
     for i in range(participants):
         for j in range(times):
-            if utility[i][j] > threshold:
+            if utility[i][j] > t:
                 votes[i][j] = 1
             else:
                 votes[i][j] = 0
 
-    voter = 0
-    for row in votes:
-        voter += 1
-        print("Voter", str(voter) + ":", row)
-    print("")
     return votes
-    
-def main():
-    #number of time slots
-    numTimeSlots = 12
 
-    #number of participant
+def individual_thresholds(participants):
+    thresholds = []
+    for i in range(participants):
+        t = (randrange(2, 8, 1))/10
+        thresholds.append(t)
+
+    return thresholds
+
+def main():
+    numTimeSlots = 12
     numParticipants = 5
 
-    #randomly generated threshold between 0.2 and 0.8
-    t = (randrange(2, 8, 1))/10
-    print("Global Threshold:", t)
+    global_threshold = .2
 
-    #randomly generated utilites (even distribution)
-    u = util(numTimeSlots, numParticipants)
+    match = []
+    no_match = []
 
-    #votes based on utilities and threshold
-    v = vote(u, t, numTimeSlots, numParticipants)
+    percent_match = []
+    percent_no_match = []
 
-    #doodle instance results
-    d = doodle(numTimeSlots, numParticipants, u, v)
+    numTrials = int(input("How many trials? "))
+    print("Number of Trials:", numTrials)
+
+    
+    for j in range(7):
+        true = 0
+        false = 0
         
+        for i in range(numTrials):
+            u = util(numTimeSlots, numParticipants)
+            v = vote(u, global_threshold, numTimeSlots, numParticipants)
+            d = doodle(v, u, numTimeSlots, numParticipants)
+
+            if d:
+                true += 1
+            else:
+                false += 1
+        
+        global_threshold += 0.1
+        match.append(true)
+        no_match.append(false)
+        percent_match.append(round((true/numTrials)*100, 2))
+        percent_no_match.append(round((false/numTrials)*100, 2))
+        
+    print("\n"+"Number of matches:", match)
+    print("Number of non-matches:", no_match)
+
+    print("\n"+"% of matches:", percent_match)
+    print("% of non-matches:", percent_no_match, "\n")
+
 main()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

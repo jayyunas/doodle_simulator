@@ -3,8 +3,8 @@
 ##Jay Yunas
 ##CS Summer Research Project
 
-##Open Simulation v1.2
-## average and max welfare approximation ratio
+##Open Simulation v2.1.2
+## number and percent of matches, simultaneously changing popularity bound
 
 from random import *
 import math
@@ -22,12 +22,9 @@ def doodle(vote, utilities, times, participants):
     max_value_utilities = max(col_totals_utilities)
     max_index_utilities = col_totals_utilities.index(max_value_utilities)
 
-    opt = max_value_utilities
-    ddl = col_totals_utilities[max_index_votes]
-
-    welfare_approx_ratio = opt/ddl
-    
-    return welfare_approx_ratio
+    if max_index_votes == max_index_utilities:
+        return True
+    return False
         
 def util(times, participants):
     utilities = [[0 for x in range(times)] for y in range(participants)]
@@ -39,13 +36,15 @@ def util(times, participants):
             
     return utilities
 
-def vote(utility, times, participants):
+def vote(utility, thresholds, popularities, times, participants):
     votes = [[0 for x in range(times)] for y in range(participants)]
-    t_2 = .75
-    t_1 = .25
+    t_2 = thresholds[1]
+    t_1 = thresholds[0]
     t_global = .5
-   
 
+    p_2 = popularities[1]
+    p_1 = popularities[0]
+   
     #have voter 0 vote based on default threshold
     for j in range(times):
         if utility[0][j] > t_global:
@@ -60,15 +59,17 @@ def vote(utility, times, participants):
             popular = False
             unpopular = False
             totals_votes_cur = [sum(x) for x in zip(*votes)]
-            if totals_votes_cur[j]/i >= .8:
+            if totals_votes_cur[j]/i >= p_2:
                 popular = True
-            if totals_votes_cur[j]/i <= .2:
+            if totals_votes_cur[j]/i <= p_1:
                 unpopular = True
 
             if utility[i][j] > t_2:
                 votes[i][j] = 1
-            elif t_1 < utility[i][j] <= t_2:
-                if popular or unpopular:
+            elif t_1 < utility[i][j] < t_2:
+                if popular:
+                    votes[i][j] = 1
+                elif unpopular:
                     votes[i][j] = 1
                 else:
                     votes[i][j] = 0
@@ -78,31 +79,45 @@ def vote(utility, times, participants):
     return votes
 
 def main():
-    while True:
-        print("Open Simulation, Average & Max Welfare Approximation Ratio")
+    print("Open Simulation, Number & Percent Matches, Varying Thresholds")
+    
+    numTimeSlots = 12
+    numParticipants = 5
 
-        numTimeSlots = 12
-        numParticipants = 5
+    t = [0.25, 0.75]
+    p = [0.1, 0.8]
+    match = []
+    no_match = []
+    percent_match = []
+    percent_no_match = []
 
-        numTrials = int(input("numTrials? "))
-        print("Number of Trials:", numTrials)
+    numTrials = int(input("numTrials? "))
+    print("Number of Trials:", numTrials)
+    
+    for j in range(7):
+        print(t, p)
+        true = 0
 
-        sum_welfare_ratio = 0
-        welfare_ratios = []
-        
         for i in range(numTrials):
             u = util(numTimeSlots, numParticipants)
-            v = vote(u, numTimeSlots, numParticipants)
+            v = vote(u, t, p, numTimeSlots, numParticipants)
             d = doodle(v, u, numTimeSlots, numParticipants)
 
-            sum_welfare_ratio += d
-            welfare_ratios.append(d)
-        
-        avg_welfare_ratio = round(sum_welfare_ratio/numTrials, 2)
-        max_welfare_ratio = round(max(welfare_ratios), 2)
+            if d:
+                true += 1
 
-        print('\n'+ "Average ratio of OPT/doodle:", avg_welfare_ratio)
-        print("Max welfare ratio of OPT/doodle:", max_welfare_ratio, "\n")
+        p[0] += 0.05
+        p[1] -= 0.05
+        match.append(true)
+        no_match.append(numTrials-true)
+        percent_match.append(round((true/numTrials)*100, 2))
+        percent_no_match.append(100-percent_match[j])
 
-    
+    print("\n"+"Number of matches:", match)
+    print("Number of non-matches:", no_match)
+
+    print("\n"+"% of matches:", percent_match)
+    print("% of non-matches:", percent_no_match, "\n")
+
+
 main()
